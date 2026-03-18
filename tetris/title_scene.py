@@ -27,7 +27,7 @@ class TitleScene(Scene):
         asyncio.create_task(self.load_ranking())
         
     async def load_ranking(self):
-        self.ranking = await fetch_scores("tetris", limit=5)
+        self.ranking = await fetch_scores("tetris", limit=10)
         print(f"DEBUG: ranking loaded: {self.ranking}")
         self.loading_ranking = False
         
@@ -46,48 +46,55 @@ class TitleScene(Scene):
 
     def draw(self, screen):
         width = screen.get_width()
+        height = screen.get_height()
         
-        # タイトルロゴ
+        # タイトルロゴ（中央に戻す）
         if self.title_logo:
-            screen.blit(self.title_logo, (width // 2 - self.title_logo.get_width() // 2, screen.get_height() // 2 - self.title_logo.get_height() // 2))
+            screen.blit(self.title_logo, (width // 2 - self.title_logo.get_width() // 2, height // 2 - self.title_logo.get_height() // 2))
         else:
             title_font = pygame.font.Font(None, 80)
             title_text = title_font.render("SEXY!! OSURISU", True, (0, 255, 255))
             screen.blit(title_text, (width // 2 - title_text.get_width() // 2, 200))
-        # UIが見やすいように半透明の黒背景を敷く
-        ui_bg = pygame.Surface((450, 270), pygame.SRCALPHA)
-        ui_bg.fill((0, 0, 0, 180))
-        screen.blit(ui_bg, (width // 2 - 225, 330))
+
+        # UIが見やすいように半透明の黒背景を敷く（透過度をさらに上げる: 180 -> 100）
+        ui_bg_w, ui_bg_h = 460, 360
+        ui_bg_x, ui_bg_y = width // 2 - ui_bg_w // 2, 230
+        ui_bg = pygame.Surface((ui_bg_w, ui_bg_h), pygame.SRCALPHA)
+        ui_bg.fill((0, 0, 0, 100))
+        screen.blit(ui_bg, (ui_bg_x, ui_bg_y))
         
         # "Press Start"
         if self.show_text:
             text_font = pygame.font.Font(None, 40)
-            # 文字枠を付けて見やすくする
             start_text_shadow = text_font.render("Press SPACE or A to Start", True, (0, 0, 0))
             start_text = text_font.render("Press SPACE or A to Start", True, (255, 255, 255))
-            screen.blit(start_text_shadow, (width // 2 - start_text.get_width() // 2 + 2, 350 + 2))
-            screen.blit(start_text, (width // 2 - start_text.get_width() // 2, 350))
+            screen.blit(start_text_shadow, (width // 2 - start_text.get_width() // 2 + 2, ui_bg_y + 20 + 2))
+            screen.blit(start_text, (width // 2 - start_text.get_width() // 2, ui_bg_y + 20))
             
         # ランキング表示
-        rank_font = pygame.font.Font(None, 36)
-        screen.blit(rank_font.render("--- TOP SCORES ---", True, (255, 215, 0)), (280, 420))
+        rank_header_font = pygame.font.Font(None, 34)
+        rank_item_font = pygame.font.Font(None, 28) # 10件入れるために少し小さく
+        
+        header_y = ui_bg_y + 75
+        screen.blit(rank_header_font.render("--- TOP SCORES ---", True, (255, 215, 0)), (width // 2 - 120, header_y))
         
         if self.loading_ranking:
-            loading_text = rank_font.render("Loading...", True, (150, 150, 150))
-            screen.blit(loading_text, (330, 460))
+            loading_text = rank_item_font.render("Loading...", True, (150, 150, 150))
+            screen.blit(loading_text, (width // 2 - loading_text.get_width() // 2, header_y + 40))
         else:
             if not self.ranking:
-                no_data_text = rank_font.render("No Data", True, (150, 150, 150))
-                screen.blit(no_data_text, (350, 460))
+                no_data_text = rank_item_font.render("No Data", True, (150, 150, 150))
+                screen.blit(no_data_text, (width // 2 - no_data_text.get_width() // 2, header_y + 40))
             else:
                 for i, row in enumerate(self.ranking):
                     if not isinstance(row, dict): continue
                     # プレイヤー名とスコアを描画
-                    name_text = f"{i+1}. {row.get('name', '????')}"
+                    name_text = f"{i+1:2d}. {row.get('name', '????')}"
                     score_text = str(row.get('score', 0))
                     
-                    n_surf = rank_font.render(name_text, True, (200, 200, 200))
-                    s_surf = rank_font.render(score_text, True, (200, 200, 200))
+                    n_surf = rank_item_font.render(name_text, True, (220, 220, 220))
+                    s_surf = rank_item_font.render(score_text, True, (220, 220, 220))
                     
-                    screen.blit(n_surf, (250, 460 + i * 30))
-                    screen.blit(s_surf, (550 - s_surf.get_width(), 460 + i * 30))
+                    ry = header_y + 40 + i * 22 # 行間も詰める
+                    screen.blit(n_surf, (ui_bg_x + 60, ry))
+                    screen.blit(s_surf, (ui_bg_x + ui_bg_w - 60 - s_surf.get_width(), ry))
