@@ -12,6 +12,9 @@ class VirtualPad:
         dpad_center_y = screen_height - 120
         dpad_size = 60
         
+        # ミュートボタン (右上)
+        self.buttons["mute"] = pygame.Rect(screen_width - 60, 10, 50, 50)
+        
         # A/Bボタンの基本位置（右下）
         btn_center_x = screen_width - 100
         btn_center_y = screen_height - 100
@@ -87,7 +90,15 @@ class VirtualPad:
                 pygame.draw.rect(pad_surface, color, rect, border_radius=10)
                 pygame.draw.rect(pad_surface, (255, 255, 255, 180), rect, 2, border_radius=10)
                 
-            # テキストラベル
-            # 簡単のため省略するか、フォントで文字を描画する
+            # テキストラベル (アイコン代わりの簡易テキスト)
+            font = pygame.font.Font(None, 24)
+            labels = {
+                "up": "U", "down": "D", "left": "L", "right": "R",
+                "action": "A", "cancel": "B", "start": "PAUSE", "mute": "MUTE"
+            }
+            label = labels.get(action, "")
+            if label:
+                txt_surf = font.render(label, True, (255, 255, 255))
+                pad_surface.blit(txt_surf, (rect.centerx - txt_surf.get_width()//2, rect.centery - txt_surf.get_height()//2))
             
         surface.blit(pad_surface, (0, 0))

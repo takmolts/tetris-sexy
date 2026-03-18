@@ -17,6 +17,7 @@ class DummyScene(Scene):
 
 async def main():
     pygame.init()
+    pygame.mixer.music.set_volume(0.3) # 初期音量を控えめ（30%）に設定
     
     # モバイル等の画面比率も考慮し、レトロゲーム風の固定解像度(例:800x600)とする
     WIDTH, HEIGHT = 800, 600
@@ -42,6 +43,7 @@ async def main():
     scene_manager.set_scene("title")
     
     running = True
+    is_muted = False
     while running:
         dt = clock.tick(60) / 1000.0
         
@@ -53,6 +55,14 @@ async def main():
         # 入力状態の更新
         vpad.update(events)
         input_manager.update(events)
+        
+        # ミュートのトグル
+        if input_manager.triggers.get("mute"):
+            is_muted = not is_muted
+            if is_muted:
+                pygame.mixer.music.set_volume(0)
+            else:
+                pygame.mixer.music.set_volume(0.3) # 少し控えめな音量
         
         # シーンの更新
         scene_manager.handle_events(events)

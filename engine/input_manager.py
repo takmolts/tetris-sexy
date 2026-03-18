@@ -31,6 +31,7 @@ class InputManager:
             pygame.K_x: "cancel",
             pygame.K_ESCAPE: "cancel",
             pygame.K_RETURN: "start",
+            pygame.K_m: "mute",
         }
         
         # 仮想パッドの状態を受け取るための外部インターフェース用辞書
