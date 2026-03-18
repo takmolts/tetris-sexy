@@ -26,8 +26,8 @@ class TitleScene(Scene):
         await asyncio.sleep(0.1)
         try:
             img = pygame.image.load("assets/title_logo.jpg").convert_alpha()
-            # 画面幅（800前提）に合わせて最大化
-            ratio = 800.0 / img.get_width()
+            # 画面の高さ（600前提）に合わせて最大化し、上下の見切れを防ぐ
+            ratio = 600.0 / img.get_height()
             self.title_logo = pygame.transform.scale(img, (int(img.get_width()*ratio), int(img.get_height()*ratio)))
         except:
             pass

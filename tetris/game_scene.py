@@ -8,6 +8,10 @@ from tetris.tetromino import Tetromino
 class GameScene(Scene):
     def __init__(self, manager):
         super().__init__(manager)
+        # キャラ画像読み込み用の属性を初期化（AttributeError防止）
+        self.special_image_main = None
+        self.special_image_effects = {}
+        
         # 非同期で演出アセットをロード
         asyncio.create_task(self.load_special_assets())
             
