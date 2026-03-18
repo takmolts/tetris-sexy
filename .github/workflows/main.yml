@@ -22,15 +22,20 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install pygbag
+      - name: Install dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
           python -m pip install pygbag
 
       - name: Build with pygbag
         run: |
           # --build: ビルドのみ実行
-          # --no_title: タイトルバーを非表示にする（お好みで）
-          python -m pygbag --build --no_title .
+          python3 -m pygbag --build .
+
+      - name: List build directory
+        run: |
+          ls -R build/web
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
