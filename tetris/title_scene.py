@@ -28,6 +28,7 @@ class TitleScene(Scene):
         
     async def load_ranking(self):
         self.ranking = await fetch_scores("tetris", limit=5)
+        print(f"DEBUG: ranking loaded: {self.ranking}")
         self.loading_ranking = False
         
     def update(self, dt):
@@ -82,7 +83,7 @@ class TitleScene(Scene):
                 for i, row in enumerate(self.ranking):
                     if not isinstance(row, dict): continue
                     # プレイヤー名とスコアを描画
-                    name_text = f"{i+1}. {row.get('name', '???')}"
+                    name_text = f"{i+1}. {row.get('name', '????')}"
                     score_text = str(row.get('score', 0))
                     
                     n_surf = rank_font.render(name_text, True, (200, 200, 200))

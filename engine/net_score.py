@@ -3,6 +3,7 @@ import json
 import asyncio
 import urllib.parse
 import urllib.request
+import time
 
 # ★ デプロイしたGASウェブアプリのURLに差し替えてください
 SCORE_API_URL = "https://script.google.com/macros/s/AKfycbz8V2XEr8FgcqAzt0D9GE49K6Gz_t38ZzHeptZJ9xUDdp21CrTQIJrt3jNYrFtNgywo/exec"
@@ -29,16 +30,64 @@ async def fetch_scores(game_id: str, limit: int = 10):
     try:
         if _is_wasm():
             import js
-            js.console.log(f"[GAS] START fetch: {url}")
-            # ブラウザのfetch APIを使用
-            resp = await js.window.fetch(url)
-            text = await resp.text()
-            js.console.log(f"[GAS] END fetch: ok (len={len(text)})")
-            data = json.loads(text)
-            return data.get("scores", [])
+            js.console.log(f"[GAS] START fetch (poll): {url}")
+            
+            # fetch_id は JS 変数名として安全な形式にする
+            fetch_id = f"f{int(time.time() * 1000)}"
+            js.window.eval(f"window['{fetch_id}'] = {{ status: 'PENDING', data: null }};")
+            
+            # setTimeout 内で window['ID'] が存在するかチェックすることで、
+            # Python 側で削除された後の「Cannot read properties of undefined」エラーを防ぐ
+            js_script = f"""
+            fetch("{url}", {{ mode: 'cors', cache: 'no-cache', redirect: 'follow' }})
+                .then(r => {{
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                }})
+                .then(json => {{
+                    if (window['{fetch_id}']) {{
+                        window['{fetch_id}'].data = JSON.stringify(json.scores || []);
+                        window['{fetch_id}'].status = 'OK';
+                    }}
+                }})
+                .catch(err => {{
+                    console.error("[GAS JS] fetch error:", err);
+                    if (window['{fetch_id}']) {{
+                        window['{fetch_id}'].status = 'ERROR';
+                    }}
+                }});
+            // 4.5秒で強制的にタイムアウト解決させる（削除済みチェック付き）
+            setTimeout(() => {{
+                if (window['{fetch_id}'] && window['{fetch_id}'].status === 'PENDING') {{
+                    console.warn("[GAS JS] internal timeout reached");
+                    window['{fetch_id}'].status = 'TIMEOUT';
+                }}
+            }}, 4500);
+            """
+            js.window.eval(js_script)
+            
+            # Python 側で定期的に完了をチェック
+            for _ in range(60): # 最大6秒
+                # eval 自体がエラーにならないよう安全にアクセス
+                status = js.window.eval(f"window['{fetch_id}'] ? window['{fetch_id}'].status : 'DELETED'")
+                if status == "OK":
+                    raw_json = js.window.eval(f"window['{fetch_id}'].data")
+                    js.console.log("[GAS] fetch success")
+                    js.window.eval(f"delete window['{fetch_id}'];")
+                    return json.loads(raw_json)
+                if status in ("ERROR", "TIMEOUT"):
+                    js.console.warn(f"[GAS] fetch aborted: {{status}}")
+                    js.window.eval(f"delete window['{fetch_id}'];")
+                    return []
+                if status == "DELETED": # 万が一削除されていた場合
+                    return []
+                await asyncio.sleep(0.1)
+                
+            js.console.error("[GAS] fetch polling timeout")
+            js.window.eval(f"if(window['{fetch_id}']) delete window['{fetch_id}'];")
+            return []
         else:
             # ネイティブ環境 (PC等)
-            print(f"DEBUG: [NATIVE] Fetching URL: {url}")
             loop = asyncio.get_event_loop()
             def _get():
                 with urllib.request.urlopen(url, timeout=8) as r:
@@ -70,9 +119,10 @@ async def send_score(game_id: str, player_name: str, score: int):
     try:
         if _is_wasm():
             import js
-            js.console.log(f"[GAS] START send: {player_name} = {score}")
-            await js.window.fetch(url)
-            js.console.log("[GAS] END send: success")
+            js.console.log(f"[GAS] START send (Image ping): {player_name} = {score}")
+            js.window.eval(f"(new Image()).src = '{url}';")
+            await asyncio.sleep(0.5)
+            js.console.log("[GAS] Send complete signal")
             return True
         else:
             # ネイティブ環境
