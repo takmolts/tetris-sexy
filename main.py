@@ -62,6 +62,7 @@ async def main():
         # ミュートのトグル
         if input_manager.triggers.get("mute"):
             is_muted = not is_muted
+            print(f"DEBUG: MUTE TOGGLED. is_muted={is_muted}")
             if is_muted:
                 pygame.mixer.music.set_volume(0)
             else:

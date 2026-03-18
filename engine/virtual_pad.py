@@ -12,8 +12,8 @@ class VirtualPad:
         dpad_center_y = screen_height - 120
         dpad_size = 60
         
-        # ミュートボタン (右上)
-        self.buttons["mute"] = pygame.Rect(screen_width - 60, 10, 50, 50)
+        # ミュートボタン (右上) - 少し下にずらして押しやすく
+        self.buttons["mute"] = pygame.Rect(screen_width - 80, 20, 70, 70)
         
         # A/Bボタンの基本位置（右下）
         btn_center_x = screen_width - 100
@@ -67,6 +67,9 @@ class VirtualPad:
             self.mouse_action = None
             
         if self.mouse_pressed and self.mouse_action:
+            if self.mouse_action == "mute":
+                # デバッグプリントを追加（ターミナルで確認可能）
+                print(f"DEBUG: MUTE BUTTON CLICKED at {mouse_pos}")
             input_manager.vpad_state[self.mouse_action] = True
             
         # TODO: pygame.FINGERDOWN などのマルチタッチ対応（必要であれば）

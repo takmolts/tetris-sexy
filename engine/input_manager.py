@@ -12,6 +12,7 @@ class InputManager:
             "action": False,  # Aボタン/Space
             "cancel": False,  # Bボタン/Esc
             "start": False,   # Startボタン/Enter
+            "mute": False,    # ミュートトグル
         }
         
         # 1フレームで押された瞬間かどうかのトリガー
