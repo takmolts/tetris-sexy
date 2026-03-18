@@ -65,7 +65,10 @@ async def main():
             if is_muted:
                 pygame.mixer.music.set_volume(0)
             else:
-                pygame.mixer.music.set_volume(0.3) # 少し控えめな音量
+                pygame.mixer.music.set_volume(0.3)
+        
+        # 仮想パッドにミュート状態を伝える
+        vpad.is_muted = is_muted
         
         # シーンの更新
         scene_manager.handle_events(events)

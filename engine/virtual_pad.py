@@ -41,6 +41,7 @@ class VirtualPad:
         
         # 表示するかどうかフラグ (PC等では不要なら非表示にできる)
         self.visible = True
+        self.is_muted = False # 外部から設定
 
     def update(self, events):
         # 状態リセット
@@ -80,7 +81,12 @@ class VirtualPad:
         for action, rect in self.buttons.items():
             # 押されているか
             is_pressed = (self.mouse_action == action and self.mouse_pressed)
-            color = (255, 255, 255, 128) if is_pressed else (255, 255, 255, 64)
+            
+            # ミュート状態による色の変更
+            if action == "mute" and self.is_muted:
+                color = (255, 100, 100, 180) if is_pressed else (255, 80, 80, 140)
+            else:
+                color = (255, 255, 255, 128) if is_pressed else (255, 255, 255, 64)
             
             # 円や角丸矩形で描画
             if action in ["action", "cancel"]:
