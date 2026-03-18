@@ -30,12 +30,7 @@ jobs:
 
       - name: Build with pygbag
         run: |
-          # --build: ビルドのみ実行
           python3 -m pygbag --build .
-
-      - name: List build directory
-        run: |
-          ls -R build/web
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
