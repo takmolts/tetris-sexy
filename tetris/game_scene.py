@@ -20,9 +20,9 @@ class GameScene(Scene):
             except:
                 return None
                 
-                self.special_image_main = load_scaled_img("assets/event_main.png", 300)
+        self.special_image_main = load_scaled_img("assets/event_main.png", 600)
         for i in range(1, 5):
-            self.special_image_effects[i] = load_scaled_img(f"assets/effect{i}.png", 300)
+            self.special_image_effects[i] = load_scaled_img(f"assets/effect{i}.png", 600)
             
         self.banana_image = None
         try:
@@ -183,7 +183,7 @@ class GameScene(Scene):
     def trigger_special(self):
         self.bananas -= 10
         self.special_active = True
-        self.special_timer = 2.0
+        self.special_timer = 3.0
         
         import random
         self.special_effect = random.randint(1, 4)
@@ -396,10 +396,10 @@ class GameScene(Scene):
             cy = draw_text_line("to trigger a SPECIAL!", left_x + 6, cy, (255, 255, 100))
             cy += 6
             cy = draw_text_line("Random effects:", left_x + 6, cy)
-            cy = draw_text_line("  Vertical Sexy", left_x + 6, cy)
-            cy = draw_text_line("  Horizontal Sexy", left_x + 6, cy)
-            cy = draw_text_line("  Sorry...", left_x + 6, cy, (255, 120, 120))
-            cy = draw_text_line("  What's S E X Y!?", left_x + 6, cy, (100, 255, 150))
+            cy = draw_text_line(" 1:Vertical Sexy", left_x + 6, cy)
+            cy = draw_text_line(" 2:Horizontal Sexy", left_x + 6, cy)
+            cy = draw_text_line(" 3:Sorry...", left_x + 6, cy, (255, 120, 120))
+            cy = draw_text_line(" 4:What's S E X Y!?", left_x + 6, cy, (100, 255, 150))
             
             # --- バージョン ---
             ver_surf = sm_font.render("Ver. 01.00.00", True, (120, 120, 120))
@@ -451,7 +451,7 @@ class GameScene(Scene):
             img_to_draw = None
             show_text = False
             
-            if self.special_timer > 1.0:
+            if self.special_timer > 1.5:
                 img_to_draw = self.special_image_main
             else:
                 img_to_draw = self.special_image_effects.get(self.special_effect)
