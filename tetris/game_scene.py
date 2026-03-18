@@ -3,6 +3,7 @@ import asyncio
 from engine.scene import Scene
 from engine.input_manager import input_manager
 from engine.net_score import fetch_scores
+from engine.config import VERSION
 from tetris.tetromino import Tetromino
 
 class GameScene(Scene):
@@ -410,7 +411,7 @@ class GameScene(Scene):
             cy = draw_text_line(" 4:What's S E X Y!?", left_x + 6, cy, (100, 255, 150))
             
             # --- バージョン ---
-            ver_surf = sm_font.render("Ver. 01.00.01", True, (120, 120, 120))
+            ver_surf = sm_font.render(f"Ver. {VERSION}", True, (120, 120, 120))
             screen.blit(ver_surf, (left_x + 6, left_y + panel_h - ver_surf.get_height() - 6))
         
         # Nextブロック

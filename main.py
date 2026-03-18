@@ -5,6 +5,7 @@ import sys
 from engine.scene import SceneManager, Scene
 from engine.input_manager import input_manager
 from engine.virtual_pad import VirtualPad
+from engine.config import VERSION
 
 # ダミーの初期シーン（後でテトリスのタイトル等に置き換える）
 class DummyScene(Scene):
@@ -25,7 +26,7 @@ async def main():
     # モバイル等の画面比率も考慮し、レトロゲーム風の固定解像度(例:800x600)とする
     WIDTH, HEIGHT = 800, 600
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Browser Games")
+    pygame.display.set_caption(f"SEXY!! OSU-RIS Ver. {VERSION}")
     
     clock = pygame.time.Clock()
     
