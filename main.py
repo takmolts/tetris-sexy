@@ -26,7 +26,7 @@ async def main():
     # モバイル等の画面比率も考慮し、レトロゲーム風の固定解像度(例:800x600)とする
     WIDTH, HEIGHT = 800, 600
     # pygame.SCALED を付加してブラウザ側でのアスペクト比維持を強制する
-    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption(f"SEXY!! OSU-RIS Ver. {VERSION}")
     
     clock = pygame.time.Clock()

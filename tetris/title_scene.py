@@ -26,7 +26,7 @@ class TitleScene(Scene):
         await asyncio.sleep(0.1)
         try:
             img = pygame.image.load("assets/title_logo.jpg").convert_alpha()
-            # 画面幅（800前提）に合わせて拡大し、上下をセンタークロップする形にする
+            # 画面幅（800前提）に合わせて拡大
             ratio = 800.0 / img.get_width()
             self.title_logo = pygame.transform.scale(img, (int(img.get_width()*ratio), int(img.get_height()*ratio)))
         except:
