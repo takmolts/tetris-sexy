@@ -8,21 +8,8 @@ from tetris.tetromino import Tetromino
 class GameScene(Scene):
     def __init__(self, manager):
         super().__init__(manager)
-        # キャラ画像読み込み
-        self.special_image_main = None
-        self.special_image_effects = {}
-        
-        def load_scaled_img(path, target_width=400):
-            try:
-                img = pygame.image.load(path).convert_alpha()
-                ratio = target_width / img.get_width()
-                return pygame.transform.scale(img, (int(img.get_width() * ratio), int(img.get_height() * ratio)))
-            except:
-                return None
-                
-        self.special_image_main = load_scaled_img("assets/event_main.png", 600)
-        for i in range(1, 5):
-            self.special_image_effects[i] = load_scaled_img(f"assets/effect{i}.png", 600)
+        # 非同期で演出アセットをロード
+        asyncio.create_task(self.load_special_assets())
             
         self.banana_image = None
         try:
@@ -46,6 +33,23 @@ class GameScene(Scene):
         # 画面中央付近に配置
         self.board_x = 400 - (self.grid_width * self.cell_size) // 2
         self.board_y = 50
+
+    async def load_special_assets(self):
+        def load_scaled_img(path, target_width=400):
+            try:
+                # 拡張子を .jpg に変更
+                img = pygame.image.load(path).convert_alpha()
+                ratio = target_width / img.get_width()
+                return pygame.transform.scale(img, (int(img.get_width() * ratio), int(img.get_height() * ratio)))
+            except:
+                return None
+
+        # 巨大画像（軽量化した .jpg）を非同期に逐次ロード
+        await asyncio.sleep(0.1)
+        self.special_image_main = load_scaled_img("assets/event_main.jpg", 600)
+        for i in range(1, 5):
+            await asyncio.sleep(0.05)
+            self.special_image_effects[i] = load_scaled_img(f"assets/effect{i}.jpg", 600)
 
     def reset(self):
         self.grid_width = 10

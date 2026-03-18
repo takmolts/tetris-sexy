@@ -19,6 +19,9 @@ async def main():
     pygame.init()
     pygame.mixer.music.set_volume(0.3) # 初期音量を控えめ（30%）に設定
     
+    # iPhone対策: 初期化直後に少し待機してブラウザに制御を返す
+    await asyncio.sleep(0.1)
+    
     # モバイル等の画面比率も考慮し、レトロゲーム風の固定解像度(例:800x600)とする
     WIDTH, HEIGHT = 800, 600
     screen = pygame.display.set_mode((WIDTH, HEIGHT))

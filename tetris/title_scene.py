@@ -15,17 +15,23 @@ class TitleScene(Scene):
         self.loading_ranking = True
         
         self.title_logo = None
+        # アセットの読み込みを非同期タスクとして開始（起動のブロッキングを防ぐ）
+        asyncio.create_task(self.load_assets())
+        
+        # 背景タスクとしてランキング取得を開始（※ブラウザ環境ではasyncioメインループの一部として動作）
+        asyncio.create_task(self.load_ranking())
+        
+    async def load_assets(self):
+        # 巨大画像（軽量化した .jpg）を非同期にロード
+        await asyncio.sleep(0.1)
         try:
-            img = pygame.image.load("assets/title_logo.png").convert_alpha()
+            img = pygame.image.load("assets/title_logo.jpg").convert_alpha()
             # 画面幅（800前提）に合わせて最大化
             ratio = 800.0 / img.get_width()
             self.title_logo = pygame.transform.scale(img, (int(img.get_width()*ratio), int(img.get_height()*ratio)))
         except:
             pass
-            
-        # 背景タスクとしてランキング取得を開始（※ブラウザ環境ではasyncioメインループの一部として動作）
-        asyncio.create_task(self.load_ranking())
-        
+
     async def load_ranking(self):
         self.ranking = await fetch_scores("tetris", limit=10)
         print(f"DEBUG: ranking loaded: {self.ranking}")
