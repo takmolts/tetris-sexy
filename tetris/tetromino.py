@@ -30,8 +30,8 @@ class Tetromino:
         self.x = x
         self.y = y
         
-        # 10%の確率でバナナマークを付与（1を2に置換）
-        if random.random() < 0.10:
+        # 20%の確率でバナナマークを付与（1を2に置換）
+        if random.random() < 0.2:
             ones = [(r, c) for r, row in enumerate(self.shape) for c, val in enumerate(row) if val == 1]
             if ones:
                 br, bc = random.choice(ones)
