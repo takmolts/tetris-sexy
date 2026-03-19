@@ -207,7 +207,8 @@ class GameScene(Scene):
     def apply_special(self):
         import random
         if self.special_effect == 1:
-            cols = random.sample(range(self.grid_width), min(3, self.grid_width))
+            start_col = random.randint(0, self.grid_width - 3)
+            cols = [start_col, start_col + 1, start_col + 2]
             for y in range(self.grid_height):
                 for x in cols:
                     self.grid[y][x] = None
