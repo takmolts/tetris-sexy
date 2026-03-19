@@ -97,8 +97,8 @@ class GameScene(Scene):
         
     def get_fall_speed(self):
         # レベルが上がるごとに速くなる (秒/マス)
-        # 1レベルごとに0.08秒ずつ短縮、最速は0.05秒
-        return max(0.05, 0.8 - (self.level - 1) * 0.08)
+        # 1レベルごとに0.0756秒ずつ短縮、最速はLV10で0.12秒
+        return max(0.12, 0.8 - (self.level - 1) * 0.0756)
 
     def check_collision(self, piece, offset_x=0, offset_y=0, shape=None):
         """指定したオフセットまたは形状での衝突判定"""
