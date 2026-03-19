@@ -79,7 +79,7 @@ class ScoreEntryScene(Scene):
 
     # ------------------------------------------------------------------
     def _submit(self):
-        name = self.player_name.strip() or "ANON"
+        name = self.player_name.strip() or "NoName"
         self.state = "sending"
         self.status_msg = "Sending..."
         pygame.key.stop_text_input()
