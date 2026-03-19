@@ -1,6 +1,7 @@
 import pygame
 import asyncio
 from engine.scene import Scene
+from engine.config import VERSION
 from engine.input_manager import input_manager
 from engine.net_score import fetch_scores
 
@@ -104,3 +105,8 @@ class TitleScene(Scene):
                     ry = header_y + 40 + i * 22 # 行間も詰める
                     screen.blit(n_surf, (ui_bg_x + 60, ry))
                     screen.blit(s_surf, (ui_bg_x + ui_bg_w - 60 - s_surf.get_width(), ry))
+
+        # バージョン表示
+        ver_font = pygame.font.Font(None, 22)
+        ver_surf = ver_font.render(f"Ver. {VERSION}", True, (120, 120, 120))
+        screen.blit(ver_surf, (width - ver_surf.get_width() - 6, height - ver_surf.get_height() - 6))
