@@ -224,9 +224,7 @@ class GameScene(Scene):
                 self.grid.append([((100, 100, 100), False) if x != hole_x else None for x in range(self.grid_width)])
         elif self.special_effect == 4:
             self.grid = [[None for _ in range(self.grid_width)] for _ in range(self.grid_height)]
-            self.level += 2
-            if self.level > 10:
-                self.level = 5
+            self.level = 1
             self.fall_speed = self.get_fall_speed()
 
     def update(self, dt):
