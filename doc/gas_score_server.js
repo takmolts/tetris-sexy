@@ -79,8 +79,27 @@ function handlePost(params, game_id) {
     sheet.appendRow(["game_id", "player_name", "score", "timestamp"]);
   }
 
-  sheet.appendRow([game_id, player_name, score, new Date().toISOString()]);
-  pruneOldScores(sheet, game_id);
+  // 同一プレイヤー名が既に存在する場合はスコアが高い方で上書き
+  const data = sheet.getDataRange().getValues();
+  let existingRow = -1;
+  let existingScore = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === game_id && String(data[i][1]) === player_name) {
+      existingRow = i + 1;  // シートの行番号（1始まり）
+      existingScore = Number(data[i][2]);
+      break;
+    }
+  }
+
+  if (existingRow > 0) {
+    if (score > existingScore) {
+      sheet.getRange(existingRow, 3).setValue(score);
+      sheet.getRange(existingRow, 4).setValue(new Date().toISOString());
+    }
+  } else {
+    sheet.appendRow([game_id, player_name, score, new Date().toISOString()]);
+    pruneOldScores(sheet, game_id);
+  }
 
   return jsonResponse({ ok: true });
 }
