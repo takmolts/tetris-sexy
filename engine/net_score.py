@@ -6,7 +6,7 @@ import urllib.request
 import time
 
 # ★ デプロイしたGASウェブアプリのURLに差し替えてください
-SCORE_API_URL = "https://script.google.com/macros/s/AKfycbz8V2XEr8FgcqAzt0D9GE49K6Gz_t38ZzHeptZJ9xUDdp21CrTQIJrt3jNYrFtNgywo/exec"
+SCORE_API_URL = "https://script.google.com/macros/s/AKfycbxmRDvBBA_g11NQy4ZwP85h_v84Gs9sxsz5UTKgYskvOSTOQinwrhNaEUzxR-q-O6-H/exec"
 
 def _is_wasm():
     return sys.platform == "emscripten"
